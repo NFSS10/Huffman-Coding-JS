@@ -57,24 +57,32 @@ export class HuffmanCoding {
             const byte = paddedFileHeader.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         }
-
+        /* 
         for (let i = 0; i < encodedStr.length; i += 8) {
             const byte = encodedStr.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         }
-
+ */
         const buffer = Buffer.concat(buffersArr);
+        // return buffer;
+
+        const testBufferArr = [];
+        const testConvertedBufferToBitsStr = this.bufferToBits(buffer);
+        for (let i = 0; i < testConvertedBufferToBitsStr.length; i += 8) {
+            const byte = testConvertedBufferToBitsStr.substring(i, i + 8);
+            testBufferArr.push(this._byteStrToBuffer(byte));
+        }
+
         // console.log("paddedFileHeader:", paddedFileHeader);
-        // console.log("testNumbers:", testNumbers)
-        console.log('buffer:', buffer);
-        console.log('converted buffer:', this._byteStrToBuffer(this.bufferToBits(buffer)));
+        console.log('o buffer:', buffer);
+        console.log('c buffer:', Buffer.concat(testBufferArr));
     }
 
     _byteStrToBuffer(byteStr) {
+        // Este nao funciona bem ...
         const number = parseInt(byteStr, 2);
         const hexValue = number.toString(16);
         const normalizedHex = hexValue.length === 1 ? `0${hexValue}` : hexValue;
-        testNumbers.push(normalizedHex);
         return Buffer.from(normalizedHex, 'hex');
     }
 
