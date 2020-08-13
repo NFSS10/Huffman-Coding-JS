@@ -6,6 +6,7 @@ export class HuffmanCoding {
         this.charsCoding = {};
         this.charsCodingMatch = {};
         this.nBits = 0;
+        this.fileHeader = {};
     }
 
     encode(str) {
@@ -25,6 +26,69 @@ export class HuffmanCoding {
         this.nBits = Math.floor(encodedStr.length / Object.keys(this.charsFreq).length);
 
         return encodedStr;
+    }
+
+    encodeToFile(str, filePath) {
+        const encodedStr = this.encode(str);
+
+        const isPadded = encodedStr.length % 2 !== 0;
+
+        this.fileHeader = {
+            isPadded: isPadded,
+            nBits: this.nBits,
+            nCodes: Object.keys(this.charsCoding).length,
+            charsCoding: this.charsCoding
+        };
+
+        const fileHeaderStr = this._encodeFileHeader(this.fileHeader);
+        const parsedFileHeader = this._parseFileHeader(fileHeaderStr);
+        console.log('\n\n\n');
+        console.log('fileHeaderStr:', fileHeaderStr);
+        console.log('this.fileHeader:', this.fileHeader);
+        console.log('parsedFileHeader:', parsedFileHeader);
+    }
+
+    _encodeFileHeader(fileHeader) {
+        let encFileHeaderStr = '';
+
+        encFileHeaderStr += fileHeader.isPadded ? '1' : '0';
+        encFileHeaderStr += ('00000000' + this.fileHeader.nBits.toString(2)).substr(-8);
+        encFileHeaderStr += ('00000000' + this.fileHeader.nCodes.toString(2)).substr(-8);
+        Object.keys(fileHeader.charsCoding).forEach(key => {
+            const keyBinary = ('00000000' + key.charCodeAt(0).toString(2)).substr(-8);
+            encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
+        });
+        if (fileHeader.isPadded) encFileHeaderStr += '0';
+
+        return encFileHeaderStr;
+    }
+
+    _parseFileHeader(headerStr) {
+        let headerInx = 0;
+        const isPadded = Boolean(parseInt(headerStr[headerInx]));
+        headerInx++;
+        const nBits = parseInt(headerStr.substring(headerInx, headerInx + 8), 2);
+        headerInx = 9;
+        const nCodes = parseInt(headerStr.substring(headerInx, headerInx + 8), 2);
+        headerInx = 17;
+        const charsCoding = {};
+        for (let i = 0; i < nCodes; i++) {
+            const keyBinary = headerStr.substring(headerInx, headerInx + 8);
+            headerInx += 8;
+
+            const keyCharCode = parseInt(keyBinary, 2);
+            const key = String.fromCharCode(keyCharCode);
+
+            charsCoding[key] = headerStr.substring(headerInx, headerInx + nBits);
+            headerInx += nBits;
+        }
+
+        return {
+            isPadded: isPadded,
+            nBits: nBits,
+            nCodes: nCodes,
+            charsCoding: charsCoding
+        };
     }
 
     decode(encodedStr) {
