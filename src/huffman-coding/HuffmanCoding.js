@@ -45,7 +45,7 @@ export class HuffmanCoding {
         };
 
         const fileHeaderStr = this._encodeFileHeader(this.fileHeader);
-        const paddedFileHeader = fileHeaderStr + "0".repeat(8 - (fileHeaderStr.length % 8));
+        const paddedFileHeader = fileHeaderStr + '0'.repeat(8 - (fileHeaderStr.length % 8));
         // const parsedFileHeader = this._parseFileHeader(fileHeaderStr);
         // console.log('\n\n\n');
         // console.log('fileHeaderStr:', fileHeaderStr);
@@ -63,12 +63,11 @@ export class HuffmanCoding {
             buffersArr.push(this._byteStrToBuffer(byte));
         }
 
-
         const buffer = Buffer.concat(buffersArr);
         // console.log("paddedFileHeader:", paddedFileHeader);
         // console.log("testNumbers:", testNumbers)
         console.log('buffer:', buffer);
-        console.log("converted buffer:", this._byteStrToBuffer(this.bufferToBits(buffer)))
+        console.log('converted buffer:', this._byteStrToBuffer(this.bufferToBits(buffer)));
     }
 
     _byteStrToBuffer(byteStr) {
@@ -79,9 +78,8 @@ export class HuffmanCoding {
         return Buffer.from(normalizedHex, 'hex');
     }
 
-
     bufferToBits(buffer) {
-        let bitsStr = "";
+        let bitsStr = '';
         for (const hex of buffer) {
             const hexAsBinary = ('00000000' + hex.toString(2)).substr(-8);
             bitsStr += hexAsBinary;
