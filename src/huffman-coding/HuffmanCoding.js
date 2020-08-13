@@ -28,7 +28,7 @@ export class HuffmanCoding {
         return encodedStr;
     }
 
-    encodeToFile(str, filePath) {
+    encodeToBuffer(str) {
         const encodedStr = this.encode(str);
 
         const isPadded = encodedStr.length % 2 !== 0;
@@ -41,11 +41,21 @@ export class HuffmanCoding {
         };
 
         const fileHeaderStr = this._encodeFileHeader(this.fileHeader);
-        const parsedFileHeader = this._parseFileHeader(fileHeaderStr);
-        console.log('\n\n\n');
-        console.log('fileHeaderStr:', fileHeaderStr);
-        console.log('this.fileHeader:', this.fileHeader);
-        console.log('parsedFileHeader:', parsedFileHeader);
+        // const parsedFileHeader = this._parseFileHeader(fileHeaderStr);
+        // console.log('\n\n\n');
+        // console.log('fileHeaderStr:', fileHeaderStr);
+        // console.log('this.fileHeader:', this.fileHeader);
+        // console.log('parsedFileHeader:', parsedFileHeader);
+
+        const buffersArr = [];
+        for (let i = 0; i < encodedStr.length; i += 8) {
+            const byte = encodedStr.substring(i, i + 8);
+            const number = parseInt(byte, 2);
+            buffersArr.push(Buffer.from(number.toString(), 'hex'));
+        }
+
+        const buffer = Buffer.concat(buffersArr);
+        console.log('buffer: ', buffer);
     }
 
     _encodeFileHeader(fileHeader) {
