@@ -47,30 +47,16 @@ export class HuffmanCoding {
         const fileHeaderStr = this._encodeFileHeader(this.fileHeader);
         const paddedFileHeader = fileHeaderStr + '0'.repeat(8 - (fileHeaderStr.length % 8));
 
+        const fullBinaryStr = paddedFileHeader + encodedStr;
+
         const buffersArr = [];
-        for (let i = 0; i < paddedFileHeader.length; i += 8) {
-            const byte = paddedFileHeader.substring(i, i + 8);
-            buffersArr.push(this._byteStrToBuffer(byte));
-        }
-        for (let i = 0; i < encodedStr.length; i += 8) {
-            const byte = encodedStr.substring(i, i + 8);
+        for (let i = 0; i < fullBinaryStr.length; i += 8) {
+            const byte = fullBinaryStr.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         }
 
         const buffer = Buffer.concat(buffersArr);
         return buffer;
-
-        //const testBufferArr = [];
-        //const testConvertedBufferToBitsStr = this.bufferToBits(buffer);
-        //console.log('size: ', testConvertedBufferToBitsStr.length);
-        //for (let i = 0; i < testConvertedBufferToBitsStr.length; i += 8) {
-        //    const byte = testConvertedBufferToBitsStr.substring(i, i + 8);
-        //    testBufferArr.push(this._byteStrToBuffer(byte));
-        //}
-        //
-        //// console.log("paddedFileHeader:", paddedFileHeader);
-        //console.log('o buffer:', buffer);
-        //console.log('c buffer:', Buffer.concat(testBufferArr));
     }
 
     _byteStrToBuffer(byteStr) {
