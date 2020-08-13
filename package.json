@@ -4,7 +4,11 @@
   "description": "Huffman Coding",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "prettier": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
+    "pretty": "npm run prettier && npm run lint-fix"
   },
   "repository": {
     "type": "git",
@@ -16,5 +20,12 @@
     "compression"
   ],
   "author": "NFSS10",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@react-native-community/eslint-config": "^2.0.0",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5"
+  }
 }

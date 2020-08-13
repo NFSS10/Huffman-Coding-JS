@@ -1,0 +1,6 @@
+/dist
+/temp
+**/dist
+**/temp
+/src
+**/src
