@@ -58,19 +58,17 @@ export class HuffmanCoding {
             buffersArr.push(this._byteStrToBuffer(byte));
         }
 
-        /*
         for (let i = 0; i < encodedStr.length; i += 8) {
             const byte = encodedStr.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         }
-                */
 
 
         const buffer = Buffer.concat(buffersArr);
-        console.log("paddedFileHeader:", paddedFileHeader);
+        // console.log("paddedFileHeader:", paddedFileHeader);
         // console.log("testNumbers:", testNumbers)
         console.log('buffer:', buffer);
-        console.log("converted buffer:", this.bufferToBits(buffer))
+        console.log("converted buffer:", this._byteStrToBuffer(this.bufferToBits(buffer)))
     }
 
     _byteStrToBuffer(byteStr) {
@@ -111,9 +109,9 @@ export class HuffmanCoding {
         const isPadded = Boolean(parseInt(headerStr[headerInx]));
         headerInx++;
         const nBits = parseInt(headerStr.substring(headerInx, headerInx + 8), 2);
-        headerInx = 9;
+        headerInx += 8;
         const nCodes = parseInt(headerStr.substring(headerInx, headerInx + 8), 2);
-        headerInx = 17;
+        headerInx += 8;
         const charsCoding = {};
         for (let i = 0; i < nCodes; i++) {
             const keyBinary = headerStr.substring(headerInx, headerInx + 8);
