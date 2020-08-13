@@ -52,15 +52,15 @@ export class HuffmanCoding {
         // console.log('parsedFileHeader:', parsedFileHeader);
 
         const buffersArr = [];
-/*         for (let i = 0; i < fileHeaderStr.length; i += 8) {
+        for (let i = 0; i < fileHeaderStr.length; i += 8) {
+            const byte = fileHeaderStr.substring(i, i + 8);
+            buffersArr.push(this._byteStrToBuffer(byte));
+        }
+
+/*         for (let i = 0; i < encodedStr.length; i += 8) {
             const byte = encodedStr.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         } */
-
-        for (let i = 0; i < encodedStr.length; i += 8) {
-            const byte = encodedStr.substring(i, i + 8);
-            buffersArr.push(this._byteStrToBuffer(byte));
-        }
 
         const buffer = Buffer.concat(buffersArr);
         console.log("fileHeaderStr:", fileHeaderStr);
