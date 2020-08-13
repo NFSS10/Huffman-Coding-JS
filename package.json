@@ -4,7 +4,7 @@
   "description": "Huffman Coding",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "prettier": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
@@ -22,10 +22,13 @@
   "author": "NFSS10",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
     "@react-native-community/eslint-config": "^2.0.0",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.4.0",
     "prettier": "^2.0.5"
   }
 }
