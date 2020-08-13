@@ -1,0 +1,20 @@
+{
+  "name": "nfss10-huffman-coding",
+  "version": "0.0.1",
+  "description": "Huffman Coding",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NFSS10/Huffman-Coding-JS"
+  },
+  "keywords": [
+    "Huffman",
+    "Coding",
+    "compression"
+  ],
+  "author": "NFSS10",
+  "license": "ISC"
+}
