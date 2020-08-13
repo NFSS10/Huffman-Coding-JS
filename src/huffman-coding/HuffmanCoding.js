@@ -1,5 +1,9 @@
 import { Node } from './Node';
 
+// TODO refactor this
+// TODO fix padding problems e talvez nao usar o valor decimal, mas sim hex
+const testNumbers = [];
+
 export class HuffmanCoding {
     constructor() {
         this.charsFreq = {};
@@ -48,14 +52,33 @@ export class HuffmanCoding {
         // console.log('parsedFileHeader:', parsedFileHeader);
 
         const buffersArr = [];
+/*         for (let i = 0; i < fileHeaderStr.length; i += 8) {
+            const byte = encodedStr.substring(i, i + 8);
+            buffersArr.push(this._byteStrToBuffer(byte));
+        } */
+
         for (let i = 0; i < encodedStr.length; i += 8) {
             const byte = encodedStr.substring(i, i + 8);
-            const number = parseInt(byte, 2);
-            buffersArr.push(Buffer.from(number.toString(), 'hex'));
+            buffersArr.push(this._byteStrToBuffer(byte));
         }
 
         const buffer = Buffer.concat(buffersArr);
-        console.log('buffer: ', buffer);
+        console.log("fileHeaderStr:", fileHeaderStr);
+        console.log("testNumbers:", testNumbers)
+        console.log('buffer:', buffer);
+    }
+
+    _byteStrToBuffer(byteStr) {
+        const number = parseInt(byteStr, 2);
+        const hexValue = number.toString(16);
+        const normalizedHex = hexValue.length === 1 ? `0${hexValue}` : hexValue; 
+        testNumbers.push(normalizedHex);
+        return Buffer.from(normalizedHex, 'hex');
+    }
+
+
+    bufferToBits(buffer) {
+
     }
 
     _encodeFileHeader(fileHeader) {
