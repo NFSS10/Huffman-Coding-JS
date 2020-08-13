@@ -1,34 +1,34 @@
 {
-  "name": "nfss10-huffman-coding",
-  "version": "0.0.1",
-  "description": "Huffman Coding",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest",
-    "lint": "eslint .",
-    "lint-fix": "eslint . --fix",
-    "prettier": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
-    "pretty": "npm run prettier && npm run lint-fix"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/NFSS10/Huffman-Coding-JS"
-  },
-  "keywords": [
-    "Huffman",
-    "Coding",
-    "compression"
-  ],
-  "author": "NFSS10",
-  "license": "ISC",
-  "devDependencies": {
-    "@babel/core": "^7.11.1",
-    "@babel/preset-env": "^7.11.0",
-    "@react-native-community/eslint-config": "^2.0.0",
-    "eslint": "^7.6.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "jest": "^26.4.0",
-    "prettier": "^2.0.5"
-  }
+    "name": "nfss10-huffman-coding",
+    "version": "0.0.1",
+    "description": "Huffman Coding",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest",
+        "lint": "eslint .",
+        "lint-fix": "eslint . --fix",
+        "prettier": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
+        "pretty": "npm run prettier && npm run lint-fix"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NFSS10/Huffman-Coding-JS"
+    },
+    "keywords": [
+        "Huffman",
+        "Coding",
+        "compression"
+    ],
+    "author": "NFSS10",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/core": "^7.11.1",
+        "@babel/preset-env": "^7.11.0",
+        "@react-native-community/eslint-config": "^2.0.0",
+        "eslint": "^7.6.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "jest": "^26.4.0",
+        "prettier": "^2.0.5"
+    }
 }
