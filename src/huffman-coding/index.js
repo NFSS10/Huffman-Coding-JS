@@ -1,1 +1,1 @@
-export * from "./HuffmanCoding.js";
+export * from './HuffmanCoding.js';

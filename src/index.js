@@ -1,1 +1,1 @@
-export * from "./huffman-coding"
+export * from './huffman-coding';
