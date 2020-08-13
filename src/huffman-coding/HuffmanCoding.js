@@ -46,43 +46,38 @@ export class HuffmanCoding {
 
         const fileHeaderStr = this._encodeFileHeader(this.fileHeader);
         const paddedFileHeader = fileHeaderStr + '0'.repeat(8 - (fileHeaderStr.length % 8));
-        // const parsedFileHeader = this._parseFileHeader(fileHeaderStr);
-        // console.log('\n\n\n');
-        // console.log('fileHeaderStr:', fileHeaderStr);
-        // console.log('this.fileHeader:', this.fileHeader);
-        // console.log('parsedFileHeader:', parsedFileHeader);
 
         const buffersArr = [];
         for (let i = 0; i < paddedFileHeader.length; i += 8) {
             const byte = paddedFileHeader.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         }
-        /* 
         for (let i = 0; i < encodedStr.length; i += 8) {
             const byte = encodedStr.substring(i, i + 8);
             buffersArr.push(this._byteStrToBuffer(byte));
         }
- */
+
         const buffer = Buffer.concat(buffersArr);
-        // return buffer;
+        return buffer;
 
-        const testBufferArr = [];
-        const testConvertedBufferToBitsStr = this.bufferToBits(buffer);
-        for (let i = 0; i < testConvertedBufferToBitsStr.length; i += 8) {
-            const byte = testConvertedBufferToBitsStr.substring(i, i + 8);
-            testBufferArr.push(this._byteStrToBuffer(byte));
-        }
-
-        // console.log("paddedFileHeader:", paddedFileHeader);
-        console.log('o buffer:', buffer);
-        console.log('c buffer:', Buffer.concat(testBufferArr));
+        //const testBufferArr = [];
+        //const testConvertedBufferToBitsStr = this.bufferToBits(buffer);
+        //console.log('size: ', testConvertedBufferToBitsStr.length);
+        //for (let i = 0; i < testConvertedBufferToBitsStr.length; i += 8) {
+        //    const byte = testConvertedBufferToBitsStr.substring(i, i + 8);
+        //    testBufferArr.push(this._byteStrToBuffer(byte));
+        //}
+        //
+        //// console.log("paddedFileHeader:", paddedFileHeader);
+        //console.log('o buffer:', buffer);
+        //console.log('c buffer:', Buffer.concat(testBufferArr));
     }
 
     _byteStrToBuffer(byteStr) {
-        // Este nao funciona bem ...
         const number = parseInt(byteStr, 2);
         const hexValue = number.toString(16);
         const normalizedHex = hexValue.length === 1 ? `0${hexValue}` : hexValue;
+
         return Buffer.from(normalizedHex, 'hex');
     }
 
@@ -92,6 +87,7 @@ export class HuffmanCoding {
             const hexAsBinary = ('00000000' + hex.toString(2)).substr(-8);
             bitsStr += hexAsBinary;
         }
+
         return bitsStr;
     }
 
@@ -105,7 +101,6 @@ export class HuffmanCoding {
             const keyBinary = ('00000000' + key.charCodeAt(0).toString(2)).substr(-8);
             encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
         });
-        // if (fileHeader.isPadded) encFileHeaderStr += '0';
 
         return encFileHeaderStr;
     }
