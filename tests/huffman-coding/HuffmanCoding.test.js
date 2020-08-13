@@ -1,9 +1,12 @@
 import { HuffmanCoding } from '../..';
 
 describe('Huffman Coding Tests', () => {
-    it('Example test', () => {
+    it('should encode a string', () => {
         const huffmanCoding = new HuffmanCoding();
 
-        expect(huffmanCoding.hello()).toEqual('hello world !');
+        const encodedStr = huffmanCoding.encode('Huffman');
+        expect(huffmanCoding.charsFreq).toEqual({ H: 1, a: 1, f: 2, m: 1, n: 1, u: 1 });
+        expect(huffmanCoding.charsCoding).toEqual({ H: '000', a: '011', f: '101', m: '010', n: '100', u: '001' });
+        expect(encodedStr).toEqual('000001101101010011100');
     });
 });
