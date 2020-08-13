@@ -9,4 +9,14 @@ describe('Huffman Coding Tests', () => {
         expect(huffmanCoding.charsCoding).toEqual({ H: '000', a: '011', f: '101', m: '010', n: '100', u: '001' });
         expect(encodedStr).toEqual('000001101101010011100');
     });
+
+    it('should decode a string', () => {
+        const huffmanCoding = new HuffmanCoding();
+
+        const encodedStr = huffmanCoding.encode('Huffman');
+        expect(encodedStr).toEqual('000001101101010011100');
+
+        const decodedStr = huffmanCoding.decode('000001101101010011100');
+        expect(decodedStr).toEqual('Huffman');
+    });
 });

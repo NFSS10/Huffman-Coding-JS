@@ -4,6 +4,8 @@ export class HuffmanCoding {
     constructor() {
         this.charsFreq = {};
         this.charsCoding = {};
+        this.charsCodingMatch = {};
+        this.nBits = 0;
     }
 
     encode(str) {
@@ -20,10 +22,22 @@ export class HuffmanCoding {
         for (let i = 0; i < str.length; i++) {
             encodedStr += this.charsCoding[str[i]];
         }
+        this.nBits = Math.floor(encodedStr.length / Object.keys(this.charsFreq).length);
+
         return encodedStr;
     }
 
-    decode(str) {}
+    decode(encodedStr) {
+        if (!this.nBits) return null;
+
+        let decodedStr = '';
+        for (let i = 0; i < encodedStr.length; i += this.nBits) {
+            const code = encodedStr.substring(i, i + this.nBits);
+            decodedStr += this.charsCodingMatch[code];
+        }
+
+        return decodedStr;
+    }
 
     _calculateCharFrequency(str) {
         for (let i = 0; i < str.length; i++) {
@@ -72,7 +86,10 @@ export class HuffmanCoding {
         if (node.left || node.right) {
             this._encodeTree(node.left, `${code}0`);
             this._encodeTree(node.right, `${code}1`);
-        } else this.charsCoding[node] = code;
+        } else {
+            this.charsCoding[node] = code;
+            this.charsCodingMatch[code] = node;
+        }
     }
 }
 
