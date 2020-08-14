@@ -51,7 +51,7 @@ export const HuffmanCoding = {
         const buffersArr = [];
         for (let i = 0; i < fullBinaryStr.length; i += 8) {
             const byte = fullBinaryStr.substring(i, i + 8);
-            buffersArr.push(Utils.byteStrToBuffer(byte));
+            buffersArr.push(Utils.byteToBuffer(byte));
         }
 
         const buffer = Buffer.concat(buffersArr);
@@ -61,10 +61,10 @@ export const HuffmanCoding = {
         let encFileHeaderStr = '';
 
         encFileHeaderStr += fileHeader.isPadded ? '1' : '0';
-        encFileHeaderStr += Utils.toByteStr(fileHeader.nBits);
-        encFileHeaderStr += Utils.toByteStr(fileHeader.nCodes);
+        encFileHeaderStr += Utils.toByte(fileHeader.nBits);
+        encFileHeaderStr += Utils.toByte(fileHeader.nCodes);
         Object.keys(fileHeader.charsCoding).forEach(key => {
-            const keyBinary = Utils.toByteStr(key.charCodeAt(0));
+            const keyBinary = Utils.toByte(key.charCodeAt(0));
             encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
         });
 
@@ -74,19 +74,19 @@ export const HuffmanCoding = {
         let headerInx = 0;
         const isPadded = Boolean(parseInt(headerStr[headerInx]));
         headerInx++;
-        const nBits = parseInt(headerStr.substring(headerInx, headerInx + 8), 2);
+        const nBits = parseInt(Utils.getByte(headerStr, headerInx), 2);
         headerInx += 8;
-        const nCodes = parseInt(headerStr.substring(headerInx, headerInx + 8), 2);
+        const nCodes = parseInt(Utils.getByte(headerStr, headerInx), 2);
         headerInx += 8;
         const charsCoding = {};
         for (let i = 0; i < nCodes; i++) {
-            const keyBinary = headerStr.substring(headerInx, headerInx + 8);
+            const keyBinary = Utils.getByte(headerStr, headerInx);
             headerInx += 8;
 
             const keyCharCode = parseInt(keyBinary, 2);
             const key = String.fromCharCode(keyCharCode);
 
-            charsCoding[key] = headerStr.substring(headerInx, headerInx + nBits);
+            charsCoding[key] = Utils.getBits(headerStr, headerInx, headerInx + nBits);
             headerInx += nBits;
         }
 
