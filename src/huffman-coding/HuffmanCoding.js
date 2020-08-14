@@ -17,7 +17,10 @@ export const HuffmanCoding = {
         for (let i = 0; i < str.length; i++) {
             encodedStr += charsCoding[str[i]];
         }
-        const nBits = Math.floor(encodedStr.length / Object.keys(charsFreq).length);
+
+        let charsNum = 0;
+        Object.keys(charsFreq).forEach(key => (charsNum += charsFreq[key]));
+        const nBits = Math.floor(encodedStr.length / charsNum);
 
         return {
             encodedStr: encodedStr,
