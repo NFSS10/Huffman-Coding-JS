@@ -29,7 +29,6 @@ export const HuffmanCoding = {
     encodeToBuffer(str) {
         const huffmanCodingRes = this.encode(str);
         const header = {
-            isPadded: huffmanCodingRes.encodedStr.length % 2 !== 0,
             nBits: huffmanCodingRes.nBits,
             nCodes: Object.keys(huffmanCodingRes.charsCoding).length,
             charsCoding: huffmanCodingRes.charsCoding
@@ -144,7 +143,6 @@ function _encodeTree(node, code, charsCoding) {
 function _headerToBytes(header) {
     let bytesStr = '';
 
-    bytesStr += header.isPadded ? '1' : '0'; // TODO maybe this won't be needed
     bytesStr += Utils.toByte(header.nBits);
     bytesStr += Utils.toByte(header.nCodes);
     Object.keys(header.charsCoding).forEach(key => {
@@ -158,9 +156,6 @@ function _headerToBytes(header) {
 
 function _bytesToHeader(headerBytes) {
     let bitIdx = 0;
-
-    const isPadded = Boolean(parseInt(headerBytes[bitIdx]));
-    bitIdx++;
 
     const nBits = parseInt(Utils.getByte(headerBytes, bitIdx), 2);
     bitIdx += 8;
@@ -180,7 +175,6 @@ function _bytesToHeader(headerBytes) {
     }
 
     return {
-        isPadded: isPadded,
         nBits: nBits,
         nCodes: nCodes,
         charsCoding: charsCoding
