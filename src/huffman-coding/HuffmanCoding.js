@@ -42,7 +42,11 @@ export const HuffmanCoding = {
 
         const buffersArr = [];
         for (let i = 0; i < fullBytes.length; i += 8) {
-            const byte = Utils.getByte(fullBytes, i);
+            let byte = Utils.getByte(fullBytes, i);
+            if (i + 8 >= fullBytes.length) {
+                byte = byte.length < 8 ? byte + '0'.repeat(8 - (byte.length % 8)) : byte;
+            }
+
             buffersArr.push(Utils.byteToBuffer(byte));
         }
 
