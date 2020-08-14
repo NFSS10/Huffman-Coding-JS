@@ -2,8 +2,8 @@ import { Node } from './Node';
 import { Utils } from '../utils';
 
 export const HuffmanCoding = {
-    encode(str) {
-        const charsFreq = _calculateCharsFrequency(str);
+    encode(str, charsCount = 1) {
+        const charsFreq = _calculateCharsFrequency(str, charsCount);
 
         let treeNodes = _buildNodes(charsFreq);
         while (treeNodes.length !== 1) {
@@ -14,8 +14,8 @@ export const HuffmanCoding = {
         _encodeTree(treeNodes[0], '', charsCoding);
 
         let encodedStr = '';
-        for (let i = 0; i < str.length; i++) {
-            encodedStr += charsCoding[str[i]];
+        for (let i = 0; i < str.length; i+=charsCount) {
+            encodedStr += charsCoding[str.substring(i, i+charsCount)];
         }
 
         let charsNum = 0;
@@ -88,10 +88,10 @@ export const HuffmanCoding = {
     }
 };
 
-function _calculateCharsFrequency(str) {
+function _calculateCharsFrequency(str, charsCount = 1) {
     const charsFreq = {};
-    for (let i = 0; i < str.length; i++) {
-        const char = str[i];
+    for (let i = 0; i < str.length; i+=charsCount) {
+        const char = str.substring(i, i+charsCount);
         charsFreq[char] = charsFreq[char] ? charsFreq[char] + 1 : 1;
     }
 
