@@ -38,11 +38,11 @@ export const HuffmanCoding = {
         };
 
         const headerBytes = _headerToBytes(header);
-        const fullBinaryStr = headerBytes + huffmanCodingRes.encodedStr;
+        const fullBytes = headerBytes + huffmanCodingRes.encodedStr;
 
         const buffersArr = [];
-        for (let i = 0; i < fullBinaryStr.length; i += 8) {
-            const byte = fullBinaryStr.substring(i, i + 8);
+        for (let i = 0; i < fullBytes.length; i += 8) {
+            const byte = Utils.getByte(fullBytes, i);
             buffersArr.push(Utils.byteToBuffer(byte));
         }
 
@@ -136,24 +136,27 @@ function _headerToBytes(header) {
     return paddedBytesStr;
 }
 
-function _parseFileHeader(headerStr) {
-    let headerInx = 0;
-    const isPadded = Boolean(parseInt(headerStr[headerInx]));
-    headerInx++;
-    const nBits = parseInt(Utils.getByte(headerStr, headerInx), 2);
-    headerInx += 8;
-    const nCodes = parseInt(Utils.getByte(headerStr, headerInx), 2);
-    headerInx += 8;
+function _bytesToHeader(headerBytes) {
+    let bitIdx = 0;
+
+    const isPadded = Boolean(parseInt(headerBytes[bitIdx]));
+    bitIdx++;
+
+    const nBits = parseInt(Utils.getByte(headerBytes, bitIdx), 2);
+    bitIdx += 8;
+
+    const nCodes = parseInt(Utils.getByte(headerBytes, bitIdx), 2);
+    bitIdx += 8;
+
     const charsCoding = {};
     for (let i = 0; i < nCodes; i++) {
-        const keyBinary = Utils.getByte(headerStr, headerInx);
-        headerInx += 8;
-
+        const keyBinary = Utils.getByte(headerBytes, bitIdx);
         const keyCharCode = parseInt(keyBinary, 2);
         const key = String.fromCharCode(keyCharCode);
+        bitIdx += 8;
 
-        charsCoding[key] = Utils.getBits(headerStr, headerInx, headerInx + nBits);
-        headerInx += nBits;
+        charsCoding[key] = Utils.getBits(headerBytes, bitIdx, bitIdx + nBits);
+        bitIdx += nBits;
     }
 
     return {
