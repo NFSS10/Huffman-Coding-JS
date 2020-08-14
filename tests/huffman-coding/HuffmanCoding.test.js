@@ -2,9 +2,7 @@ import { HuffmanCoding } from '../..';
 
 describe('Huffman Coding Tests', () => {
     it('should encode a string', () => {
-        const huffmanCoding = new HuffmanCoding();
-
-        const huffmanCodingRes = huffmanCoding.encode('Huffman');
+        const huffmanCodingRes = HuffmanCoding.encode('Huffman');
         expect(huffmanCodingRes.charsFreq).toEqual({
             H: 1,
             a: 1,
@@ -25,12 +23,10 @@ describe('Huffman Coding Tests', () => {
     });
 
     it('should decode a string', () => {
-        const huffmanCoding = new HuffmanCoding();
-
-        const huffmanCodingRes = huffmanCoding.encode('Huffman');
+        const huffmanCodingRes = HuffmanCoding.encode('Huffman');
         expect(huffmanCodingRes.encodedStr).toEqual('000001101101010011100');
 
-        const decodedStr = huffmanCoding.decode(
+        const decodedStr = HuffmanCoding.decode(
             '000001101101010011100',
             huffmanCodingRes.charsCodingMatch,
             huffmanCodingRes.nBits

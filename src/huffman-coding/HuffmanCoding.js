@@ -1,16 +1,9 @@
 import { Node } from './Node';
 
-// TODO refactor this
 // TODO fix padding problems e talvez nao usar o valor decimal, mas sim hex
 const testNumbers = [];
 
-export class HuffmanCoding {
-    constructor() {
-        this.charsCoding = {};
-        this.nBits = 0;
-        this.fileHeader = {};
-    }
-
+export const HuffmanCoding = {
     encode(str) {
         const charsFreq = this._calculateCharsFrequency(str);
 
@@ -36,24 +29,23 @@ export class HuffmanCoding {
             charsCodingMatch: charsCodingMatch,
             nBits: nBits
         };
-    }
-
+    },
     encodeToBuffer(str) {
-        const encodedStr = this.encode(str);
+        const huffmanCodingRes = this.encode(str);
 
-        const isPadded = encodedStr.length % 2 !== 0;
+        const isPadded = huffmanCodingRes.encodedStr.length % 2 !== 0;
 
-        this.fileHeader = {
+        const fileHeader = {
             isPadded: isPadded,
-            nBits: this.nBits,
-            nCodes: Object.keys(this.charsCoding).length,
-            charsCoding: this.charsCoding
+            nBits: huffmanCodingRes.nBits,
+            nCodes: Object.keys(huffmanCodingRes.charsCoding).length,
+            charsCoding: huffmanCodingRes.charsCoding
         };
 
-        const fileHeaderStr = this._encodeFileHeader(this.fileHeader);
+        const fileHeaderStr = this._encodeFileHeader(fileHeader);
         const paddedFileHeader = fileHeaderStr + '0'.repeat(8 - (fileHeaderStr.length % 8));
 
-        const fullBinaryStr = paddedFileHeader + encodedStr;
+        const fullBinaryStr = paddedFileHeader + huffmanCodingRes.encodedStr;
 
         const buffersArr = [];
         for (let i = 0; i < fullBinaryStr.length; i += 8) {
@@ -63,7 +55,7 @@ export class HuffmanCoding {
 
         const buffer = Buffer.concat(buffersArr);
         return buffer;
-    }
+    },
 
     _byteStrToBuffer(byteStr) {
         const number = parseInt(byteStr, 2);
@@ -71,7 +63,7 @@ export class HuffmanCoding {
         const normalizedHex = hexValue.length === 1 ? `0${hexValue}` : hexValue;
 
         return Buffer.from(normalizedHex, 'hex');
-    }
+    },
 
     bufferToBits(buffer) {
         let bitsStr = '';
@@ -81,7 +73,7 @@ export class HuffmanCoding {
         }
 
         return bitsStr;
-    }
+    },
 
     _encodeFileHeader(fileHeader) {
         let encFileHeaderStr = '';
@@ -95,8 +87,7 @@ export class HuffmanCoding {
         });
 
         return encFileHeaderStr;
-    }
-
+    },
     _parseFileHeader(headerStr) {
         let headerInx = 0;
         const isPadded = Boolean(parseInt(headerStr[headerInx]));
@@ -123,8 +114,7 @@ export class HuffmanCoding {
             nCodes: nCodes,
             charsCoding: charsCoding
         };
-    }
-
+    },
     decode(encodedStr, charsCodingMatch, nBits) {
         if (!nBits) return null;
 
@@ -135,8 +125,7 @@ export class HuffmanCoding {
         }
 
         return decodedStr;
-    }
-
+    },
     _calculateCharsFrequency(str) {
         const charsFreq = {};
         for (let i = 0; i < str.length; i++) {
@@ -145,8 +134,7 @@ export class HuffmanCoding {
         }
 
         return charsFreq;
-    }
-
+    },
     _buildNodes(charsFreq) {
         const sortedChars = Object.keys(charsFreq).sort((a, b) => charsFreq[a] - charsFreq[b]);
 
@@ -163,8 +151,7 @@ export class HuffmanCoding {
         }
 
         return nodes;
-    }
-
+    },
     _joinNodes(nodes) {
         const joinedNodes = [];
         for (let i = 0; i < nodes.length; i += 2) {
@@ -179,8 +166,7 @@ export class HuffmanCoding {
         }
 
         return joinedNodes;
-    }
-
+    },
     _encodeTree(node, code, charsCoding, charsCodingMatch) {
         if (!node) return;
 
@@ -192,6 +178,6 @@ export class HuffmanCoding {
             charsCodingMatch[code] = node;
         }
     }
-}
+};
 
 export default HuffmanCoding;
