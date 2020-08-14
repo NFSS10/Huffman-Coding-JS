@@ -2,8 +2,8 @@ import { HuffmanCoding } from '../..';
 
 describe('Huffman Coding Tests', () => {
     it('should encode a string', () => {
-        const huffmanCodingRes = HuffmanCoding.encode('Huffman');
-        expect(huffmanCodingRes.charsFreq).toEqual({
+        const huffmanCodingRes1 = HuffmanCoding.encode('Huffman');
+        expect(huffmanCodingRes1.charsFreq).toEqual({
             H: 1,
             a: 1,
             f: 2,
@@ -11,7 +11,7 @@ describe('Huffman Coding Tests', () => {
             n: 1,
             u: 1
         });
-        expect(huffmanCodingRes.charsCoding).toEqual({
+        expect(huffmanCodingRes1.charsCoding).toEqual({
             H: '000',
             a: '011',
             f: '101',
@@ -19,7 +19,14 @@ describe('Huffman Coding Tests', () => {
             n: '100',
             u: '001'
         });
-        expect(huffmanCodingRes.encodedStr).toEqual('000001101101010011100');
+        expect(huffmanCodingRes1.nBits).toEqual(3);
+        expect(huffmanCodingRes1.encodedStr).toEqual('000001101101010011100');
+
+        const huffmanCodingRes2 = HuffmanCoding.encode('Example of a random phrase.');
+        expect(huffmanCodingRes2.encodedStr).toEqual(
+            '000010001111110010110101101011101101011111101111111010011111011001001101110011101011001110011111001010100001'
+        );
+        expect(huffmanCodingRes2.nBits).toEqual(4);
     });
 
     it('should decode a string', () => {
@@ -32,6 +39,18 @@ describe('Huffman Coding Tests', () => {
             huffmanCodingRes.nBits
         );
         expect(decodedStr).toEqual('Huffman');
+
+        const huffmanCodingRes2 = HuffmanCoding.encode('Example of a random phrase.');
+        expect(huffmanCodingRes2.encodedStr).toEqual(
+            '000010001111110010110101101011101101011111101111111010011111011001001101110011101011001110011111001010100001'
+        );
+
+        const decodedStr2 = HuffmanCoding.decode(
+            '000010001111110010110101101011101101011111101111111010011111011001001101110011101011001110011111001010100001',
+            huffmanCodingRes2.charsCoding,
+            huffmanCodingRes2.nBits
+        );
+        expect(decodedStr2).toEqual('Example of a random phrase.');
     });
 
     it('should encode to a buffer', () => {
