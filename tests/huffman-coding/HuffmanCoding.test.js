@@ -28,7 +28,7 @@ describe('Huffman Coding Tests', () => {
 
         const decodedStr = HuffmanCoding.decode(
             '000001101101010011100',
-            huffmanCodingRes.charsCodingMatch,
+            huffmanCodingRes.charsCoding,
             huffmanCodingRes.nBits
         );
         expect(decodedStr).toEqual('Huffman');
