@@ -14,8 +14,8 @@ export const HuffmanCoding = {
         _encodeTree(treeNodes[0], '', charsCoding);
 
         let encodedStr = '';
-        for (let i = 0; i < str.length; i+=charsCount) {
-            encodedStr += charsCoding[str.substring(i, i+charsCount)];
+        for (let i = 0; i < str.length; i += charsCount) {
+            encodedStr += charsCoding[str.substring(i, i + charsCount)];
         }
 
         let charsNum = 0;
@@ -90,8 +90,8 @@ export const HuffmanCoding = {
 
 function _calculateCharsFrequency(str, charsCount = 1) {
     const charsFreq = {};
-    for (let i = 0; i < str.length; i+=charsCount) {
-        const char = str.substring(i, i+charsCount);
+    for (let i = 0; i < str.length; i += charsCount) {
+        const char = str.substring(i, i + charsCount);
         charsFreq[char] = charsFreq[char] ? charsFreq[char] + 1 : 1;
     }
 

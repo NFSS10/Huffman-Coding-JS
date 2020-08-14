@@ -3,22 +3,8 @@ import { HuffmanCoding } from '../..';
 describe('Huffman Coding Tests', () => {
     it('should encode a string', () => {
         const huffmanCodingRes1 = HuffmanCoding.encode('Huffman');
-        expect(huffmanCodingRes1.charsFreq).toEqual({
-            H: 1,
-            a: 1,
-            f: 2,
-            m: 1,
-            n: 1,
-            u: 1
-        });
-        expect(huffmanCodingRes1.charsCoding).toEqual({
-            H: '000',
-            a: '011',
-            f: '101',
-            m: '010',
-            n: '100',
-            u: '001'
-        });
+        expect(huffmanCodingRes1.charsFreq).toEqual({ H: 1, a: 1, f: 2, m: 1, n: 1, u: 1 });
+        expect(huffmanCodingRes1.charsCoding).toEqual({ H: '000', a: '011', f: '101', m: '010', n: '100', u: '001' });
         expect(huffmanCodingRes1.nBits).toEqual(3);
         expect(huffmanCodingRes1.encodedStr).toEqual('000001101101010011100');
 
@@ -67,15 +53,14 @@ describe('Huffman Coding Tests', () => {
         expect(decodedBufferContents).toEqual('Huffman');
     });
 
-
     it('should encode and decode a string with a variable number of chars as the key', () => {
         const res1 = HuffmanCoding.encode('Huffman', 2);
-        expect(res1.charsFreq).toEqual({Hu: 1,ff: 1,ma: 1,n: 1});
-        expect(res1.charsCoding).toEqual({Hu: '00',ff: '01',ma: '10',n: '11'});
+        expect(res1.charsFreq).toEqual({ Hu: 1, ff: 1, ma: 1, n: 1 });
+        expect(res1.charsCoding).toEqual({ Hu: '00', ff: '01', ma: '10', n: '11' });
         expect(res1.nBits).toEqual(2);
         expect(res1.encodedStr).toEqual('00011011');
 
-        const res1Decoded = HuffmanCoding.decode('00011011', res1.charsCoding, res1.nBits)
+        const res1Decoded = HuffmanCoding.decode('00011011', res1.charsCoding, res1.nBits);
         expect(res1Decoded).toEqual('Huffman');
     });
 });
