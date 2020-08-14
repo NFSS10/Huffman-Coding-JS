@@ -1,96 +1,170 @@
 import { Node } from './Node';
+import { Utils } from '../utils';
 
-export class HuffmanCoding {
-    constructor() {
-        this.charsFreq = {};
-        this.charsCoding = {};
-        this.charsCodingMatch = {};
-        this.nBits = 0;
-    }
-
+export const HuffmanCoding = {
     encode(str) {
-        this._calculateCharFrequency(str);
+        const charsFreq = _calculateCharsFrequency(str);
 
-        let treeNodes = this._buildNodes();
+        let treeNodes = _buildNodes(charsFreq);
         while (treeNodes.length !== 1) {
-            treeNodes = this._joinNodes(treeNodes);
+            treeNodes = _joinNodes(treeNodes);
         }
 
-        this._encodeTree(treeNodes[0], '');
+        const charsCoding = {};
+        const charsCodingMatch = {};
+        _encodeTree(treeNodes[0], '', charsCoding, charsCodingMatch);
 
         let encodedStr = '';
         for (let i = 0; i < str.length; i++) {
-            encodedStr += this.charsCoding[str[i]];
+            encodedStr += charsCoding[str[i]];
         }
-        this.nBits = Math.floor(encodedStr.length / Object.keys(this.charsFreq).length);
+        const nBits = Math.floor(encodedStr.length / Object.keys(charsFreq).length);
 
-        return encodedStr;
-    }
+        return {
+            encodedStr: encodedStr,
+            charsFreq: charsFreq,
+            charsCoding: charsCoding,
+            charsCodingMatch: charsCodingMatch,
+            nBits: nBits
+        };
+    },
+    encodeToBuffer(str) {
+        const huffmanCodingRes = this.encode(str);
+        const header = {
+            isPadded: (huffmanCodingRes.encodedStr.length % 2) !== 0,
+            nBits: huffmanCodingRes.nBits,
+            nCodes: Object.keys(huffmanCodingRes.charsCoding).length,
+            charsCoding: huffmanCodingRes.charsCoding
+        };
 
-    decode(encodedStr) {
-        if (!this.nBits) return null;
+        const headerBytes = _headerToBytes(header);
+        const fullBytes = headerBytes + huffmanCodingRes.encodedStr;
+
+        const buffersArr = [];
+        for (let i = 0; i < fullBytes.length; i += 8) {
+            const byte = Utils.getByte(fullBytes, i);
+            buffersArr.push(Utils.byteToBuffer(byte));
+        }
+
+        const buffer = Buffer.concat(buffersArr);
+        return buffer;
+    },
+    decode(encodedStr, charsCodingMatch, nBits) {
+        if (!nBits) return null;
 
         let decodedStr = '';
-        for (let i = 0; i < encodedStr.length; i += this.nBits) {
-            const code = encodedStr.substring(i, i + this.nBits);
-            decodedStr += this.charsCodingMatch[code];
+        for (let i = 0; i < encodedStr.length; i += nBits) {
+            const code = encodedStr.substring(i, i + nBits);
+            decodedStr += charsCodingMatch[code];
         }
 
         return decodedStr;
+    },
+    decodeFromBuffer(buffer) {
+        // TODO
+    }
+};
+
+function _calculateCharsFrequency(str) {
+    const charsFreq = {};
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        charsFreq[char] = charsFreq[char] ? charsFreq[char] + 1 : 1;
     }
 
-    _calculateCharFrequency(str) {
-        for (let i = 0; i < str.length; i++) {
-            const char = str[i];
-            this.charsFreq[char] = this.charsFreq[char] ? this.charsFreq[char] + 1 : 1;
-        }
+    return charsFreq;
+}
+
+function _buildNodes(charsFreq) {
+    const sortedChars = Object.keys(charsFreq).sort((a, b) => charsFreq[a] - charsFreq[b]);
+
+    const nodes = [];
+    for (let i = 0; i < sortedChars.length; i += 2) {
+        const char1 = sortedChars[i] ? sortedChars[i] : null;
+        const char2 = sortedChars[i + 1] ? sortedChars[i + 1] : null;
+
+        const char1Freq = charsFreq[char1] ? charsFreq[char1] : 0;
+        const char2Freq = charsFreq[char2] ? charsFreq[char2] : 0;
+
+        const newNode = new Node(char1Freq + char2Freq, char1, char2);
+        nodes.push(newNode);
     }
 
-    _buildNodes() {
-        const sortedChars = Object.keys(this.charsFreq).sort((a, b) => this.charsFreq[a] - this.charsFreq[b]);
+    return nodes;
+}
 
-        const nodes = [];
-        for (let i = 0; i < sortedChars.length; i += 2) {
-            const char1 = sortedChars[i] ? sortedChars[i] : null;
-            const char2 = sortedChars[i + 1] ? sortedChars[i + 1] : null;
+function _joinNodes(nodes) {
+    const joinedNodes = [];
+    for (let i = 0; i < nodes.length; i += 2) {
+        const node1 = nodes[i] ? nodes[i] : null;
+        const node2 = nodes[i + 1] ? nodes[i + 1] : null;
 
-            const char1Freq = this.charsFreq[char1] ? this.charsFreq[char1] : 0;
-            const char2Freq = this.charsFreq[char2] ? this.charsFreq[char2] : 0;
+        const n1Value = node1 ? node1.value : 0;
+        const n2Value = node2 ? node2.value : 0;
 
-            const newNode = new Node(char1Freq + char2Freq, char1, char2);
-            nodes.push(newNode);
-        }
-
-        return nodes;
+        const joinedNode = new Node(n1Value + n2Value, node1, node2);
+        joinedNodes.push(joinedNode);
     }
 
-    _joinNodes(nodes) {
-        const joinedNodes = [];
-        for (let i = 0; i < nodes.length; i += 2) {
-            const node1 = nodes[i] ? nodes[i] : null;
-            const node2 = nodes[i + 1] ? nodes[i + 1] : null;
+    return joinedNodes;
+}
 
-            const n1Value = node1 ? node1.value : 0;
-            const n2Value = node2 ? node2.value : 0;
+function _encodeTree(node, code, charsCoding, charsCodingMatch) {
+    if (!node) return;
 
-            const joinedNode = new Node(n1Value + n2Value, node1, node2);
-            joinedNodes.push(joinedNode);
-        }
+    if (node.left || node.right) {
+        _encodeTree(node.left, `${code}0`, charsCoding, charsCodingMatch);
+        _encodeTree(node.right, `${code}1`, charsCoding, charsCodingMatch);
+    } else {
+        charsCoding[node] = code;
+        charsCodingMatch[code] = node;
+    }
+}
 
-        return joinedNodes;
+function _headerToBytes(header) {
+    let bytesStr = '';
+
+    bytesStr += header.isPadded ? '1' : '0'; // TODO maybe this won't be needed
+    bytesStr += Utils.toByte(header.nBits);
+    bytesStr += Utils.toByte(header.nCodes);
+    Object.keys(header.charsCoding).forEach(key => {
+        const keyBinary = Utils.toByte(key.charCodeAt(0));
+        bytesStr += `${keyBinary}${header.charsCoding[key]}`;
+    });
+
+    const paddedBytesStr = bytesStr + '0'.repeat(8 - (bytesStr.length % 8));
+    return paddedBytesStr;
+}
+
+function _bytesToHeader(headerBytes) {
+    let bitIdx = 0;
+
+    const isPadded = Boolean(parseInt(headerBytes[bitIdx]));
+    bitIdx++;
+
+    const nBits = parseInt(Utils.getByte(headerBytes, bitIdx), 2);
+    bitIdx += 8;
+
+    const nCodes = parseInt(Utils.getByte(headerBytes, bitIdx), 2);
+    bitIdx += 8;
+
+    const charsCoding = {};
+    for (let i = 0; i < nCodes; i++) {
+        const keyBinary = Utils.getByte(headerBytes, bitIdx);
+        const keyCharCode = parseInt(keyBinary, 2);
+        const key = String.fromCharCode(keyCharCode);
+        bitIdx += 8;
+
+        charsCoding[key] = Utils.getBits(headerBytes, bitIdx, bitIdx + nBits);
+        bitIdx += nBits;
     }
 
-    _encodeTree(node, code) {
-        if (!node) return;
-
-        if (node.left || node.right) {
-            this._encodeTree(node.left, `${code}0`);
-            this._encodeTree(node.right, `${code}1`);
-        } else {
-            this.charsCoding[node] = code;
-            this.charsCodingMatch[code] = node;
-        }
-    }
+    return {
+        isPadded: isPadded,
+        nBits: nBits,
+        nCodes: nCodes,
+        charsCoding: charsCoding
+    };
 }
 
 export default HuffmanCoding;
