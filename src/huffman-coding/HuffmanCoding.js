@@ -11,8 +11,7 @@ export const HuffmanCoding = {
         }
 
         const charsCoding = {};
-        const charsCodingMatch = {};
-        _encodeTree(treeNodes[0], '', charsCoding, charsCodingMatch);
+        _encodeTree(treeNodes[0], '', charsCoding);
 
         let encodedStr = '';
         for (let i = 0; i < str.length; i++) {
@@ -24,14 +23,13 @@ export const HuffmanCoding = {
             encodedStr: encodedStr,
             charsFreq: charsFreq,
             charsCoding: charsCoding,
-            charsCodingMatch: charsCodingMatch,
             nBits: nBits
         };
     },
     encodeToBuffer(str) {
         const huffmanCodingRes = this.encode(str);
         const header = {
-            isPadded: (huffmanCodingRes.encodedStr.length % 2) !== 0,
+            isPadded: huffmanCodingRes.encodedStr.length % 2 !== 0,
             nBits: huffmanCodingRes.nBits,
             nCodes: Object.keys(huffmanCodingRes.charsCoding).length,
             charsCoding: huffmanCodingRes.charsCoding
@@ -42,26 +40,49 @@ export const HuffmanCoding = {
 
         const buffersArr = [];
         for (let i = 0; i < fullBytes.length; i += 8) {
-            const byte = Utils.getByte(fullBytes, i);
+            let byte = Utils.getByte(fullBytes, i);
+            if (i + 8 >= fullBytes.length) {
+                byte = byte.length < 8 ? byte + '0'.repeat(8 - (byte.length % 8)) : byte;
+            }
+
             buffersArr.push(Utils.byteToBuffer(byte));
         }
 
         const buffer = Buffer.concat(buffersArr);
         return buffer;
     },
-    decode(encodedStr, charsCodingMatch, nBits) {
+    decode(encodedStr, charsCoding, nBits) {
         if (!nBits) return null;
+
+        const charsCodingReversed = {};
+        Object.keys(charsCoding).forEach(key => {
+            charsCodingReversed[charsCoding[key]] = key;
+        });
 
         let decodedStr = '';
         for (let i = 0; i < encodedStr.length; i += nBits) {
             const code = encodedStr.substring(i, i + nBits);
-            decodedStr += charsCodingMatch[code];
+            decodedStr += charsCodingReversed[code];
         }
 
         return decodedStr;
     },
     decodeFromBuffer(buffer) {
-        // TODO
+        const bytes = Utils.bufferToBytes(buffer);
+
+        const header = _bytesToHeader(bytes);
+
+        const headerContentLength = 1 + 8 + 8 + (8 + header.nBits) * header.nCodes;
+        const headerPaddedLength = 8 - (headerContentLength % 8);
+
+        const contentStartBitIdx = headerContentLength + headerPaddedLength;
+        const contentEndBitIdx = contentStartBitIdx + 1 + header.nBits * header.nCodes;
+        let encodedContentStr = '';
+        for (let bitIdx = contentStartBitIdx; bitIdx < contentEndBitIdx; bitIdx += header.nBits) {
+            encodedContentStr += Utils.getBits(bytes, bitIdx, bitIdx + header.nBits);
+        }
+
+        return this.decode(encodedContentStr, header.charsCoding, header.nBits);
     }
 };
 
@@ -109,15 +130,14 @@ function _joinNodes(nodes) {
     return joinedNodes;
 }
 
-function _encodeTree(node, code, charsCoding, charsCodingMatch) {
+function _encodeTree(node, code, charsCoding) {
     if (!node) return;
 
     if (node.left || node.right) {
-        _encodeTree(node.left, `${code}0`, charsCoding, charsCodingMatch);
-        _encodeTree(node.right, `${code}1`, charsCoding, charsCodingMatch);
+        _encodeTree(node.left, `${code}0`, charsCoding);
+        _encodeTree(node.right, `${code}1`, charsCoding);
     } else {
         charsCoding[node] = code;
-        charsCodingMatch[code] = node;
     }
 }
 

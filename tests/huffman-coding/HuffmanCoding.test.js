@@ -28,9 +28,23 @@ describe('Huffman Coding Tests', () => {
 
         const decodedStr = HuffmanCoding.decode(
             '000001101101010011100',
-            huffmanCodingRes.charsCodingMatch,
+            huffmanCodingRes.charsCoding,
             huffmanCodingRes.nBits
         );
         expect(decodedStr).toEqual('Huffman');
+    });
+
+    it('should encode to a buffer', () => {
+        const buffer = HuffmanCoding.encodeToBuffer('Huffman');
+        // eslint-disable-next-line no-undef
+        expect(buffer).toEqual(Buffer.from([129, 131, 36, 7, 82, 218, 152, 91, 116, 102, 160, 6, 212, 224]));
+    });
+
+    it('should decode from a buffer', () => {
+        // eslint-disable-next-line no-undef
+        const buffer = Buffer.from([129, 131, 36, 7, 82, 218, 152, 91, 116, 102, 160, 6, 212, 224]);
+
+        const decodedBufferContents = HuffmanCoding.decodeFromBuffer(buffer);
+        expect(decodedBufferContents).toEqual('Huffman');
     });
 });
