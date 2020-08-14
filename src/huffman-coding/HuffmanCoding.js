@@ -6,7 +6,6 @@ const testNumbers = [];
 
 export class HuffmanCoding {
     constructor() {
-        this.charsFreq = {};
         this.charsCoding = {};
         this.charsCodingMatch = {};
         this.nBits = 0;
@@ -14,22 +13,30 @@ export class HuffmanCoding {
     }
 
     encode(str) {
-        this._calculateCharFrequency(str);
+        const charsFreq = this._calculateCharsFrequency(str);
 
-        let treeNodes = this._buildNodes();
+        let treeNodes = this._buildNodes(charsFreq);
         while (treeNodes.length !== 1) {
             treeNodes = this._joinNodes(treeNodes);
         }
 
-        this._encodeTree(treeNodes[0], '');
+        const charsCoding = {};
+        const charsCodingMatch = {};
+        this._encodeTree(treeNodes[0], '', charsCoding, charsCodingMatch);
 
         let encodedStr = '';
         for (let i = 0; i < str.length; i++) {
-            encodedStr += this.charsCoding[str[i]];
+            encodedStr += charsCoding[str[i]];
         }
-        this.nBits = Math.floor(encodedStr.length / Object.keys(this.charsFreq).length);
+        const nBits = Math.floor(encodedStr.length / Object.keys(charsFreq).length);
 
-        return encodedStr;
+        return {
+            encodedStr: encodedStr,
+            charsFreq: charsFreq,
+            charsCoding: charsCoding,
+            charsCodingMatch: charsCodingMatch,
+            nBits: nBits
+        };
     }
 
     encodeToBuffer(str) {
@@ -131,23 +138,26 @@ export class HuffmanCoding {
         return decodedStr;
     }
 
-    _calculateCharFrequency(str) {
+    _calculateCharsFrequency(str) {
+        const charsFreq = {};
         for (let i = 0; i < str.length; i++) {
             const char = str[i];
-            this.charsFreq[char] = this.charsFreq[char] ? this.charsFreq[char] + 1 : 1;
+            charsFreq[char] = charsFreq[char] ? charsFreq[char] + 1 : 1;
         }
+
+        return charsFreq;
     }
 
-    _buildNodes() {
-        const sortedChars = Object.keys(this.charsFreq).sort((a, b) => this.charsFreq[a] - this.charsFreq[b]);
+    _buildNodes(charsFreq) {
+        const sortedChars = Object.keys(charsFreq).sort((a, b) => charsFreq[a] - charsFreq[b]);
 
         const nodes = [];
         for (let i = 0; i < sortedChars.length; i += 2) {
             const char1 = sortedChars[i] ? sortedChars[i] : null;
             const char2 = sortedChars[i + 1] ? sortedChars[i + 1] : null;
 
-            const char1Freq = this.charsFreq[char1] ? this.charsFreq[char1] : 0;
-            const char2Freq = this.charsFreq[char2] ? this.charsFreq[char2] : 0;
+            const char1Freq = charsFreq[char1] ? charsFreq[char1] : 0;
+            const char2Freq = charsFreq[char2] ? charsFreq[char2] : 0;
 
             const newNode = new Node(char1Freq + char2Freq, char1, char2);
             nodes.push(newNode);
@@ -172,15 +182,15 @@ export class HuffmanCoding {
         return joinedNodes;
     }
 
-    _encodeTree(node, code) {
+    _encodeTree(node, code, charsCoding, charsCodingMatch) {
         if (!node) return;
 
         if (node.left || node.right) {
-            this._encodeTree(node.left, `${code}0`);
-            this._encodeTree(node.right, `${code}1`);
+            this._encodeTree(node.left, `${code}0`, charsCoding, charsCodingMatch);
+            this._encodeTree(node.right, `${code}1`, charsCoding, charsCodingMatch);
         } else {
-            this.charsCoding[node] = code;
-            this.charsCodingMatch[code] = node;
+            charsCoding[node] = code;
+            charsCodingMatch[code] = node;
         }
     }
 }
