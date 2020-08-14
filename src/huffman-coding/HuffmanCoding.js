@@ -79,6 +79,7 @@ function _calculateCharsFrequency(str) {
 
     return charsFreq;
 }
+
 function _buildNodes(charsFreq) {
     const sortedChars = Object.keys(charsFreq).sort((a, b) => charsFreq[a] - charsFreq[b]);
 
@@ -96,6 +97,7 @@ function _buildNodes(charsFreq) {
 
     return nodes;
 }
+
 function _joinNodes(nodes) {
     const joinedNodes = [];
     for (let i = 0; i < nodes.length; i += 2) {
@@ -111,6 +113,7 @@ function _joinNodes(nodes) {
 
     return joinedNodes;
 }
+
 function _encodeTree(node, code, charsCoding, charsCodingMatch) {
     if (!node) return;
 
@@ -136,6 +139,7 @@ function _encodeFileHeader(fileHeader) {
 
     return encFileHeaderStr;
 }
+
 function _parseFileHeader(headerStr) {
     let headerInx = 0;
     const isPadded = Boolean(parseInt(headerStr[headerInx]));
