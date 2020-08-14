@@ -65,7 +65,23 @@ export const HuffmanCoding = {
         return decodedStr;
     },
     decodeFromBuffer(buffer) {
-        // TODO
+        const bytes = Utils.bufferToBytes(buffer);
+
+        const header = _bytesToHeader(bytes);
+
+        const headerContentLength = 1 + 8 + 8 + (8 + header.nBits) * header.nCodes;
+        const headerPaddedLength = 8 - (headerContentLength % 8);
+
+        const contentStartBitIdx = headerContentLength + headerPaddedLength;
+        const contentEndBitIdx = contentStartBitIdx + 1 + (header.nBits * header.nCodes);
+        let encodedContentStr = "";
+        for (let bitIdx = contentStartBitIdx; bitIdx < contentEndBitIdx; bitIdx += header.nBits) {
+            encodedContentStr += Utils.getBits(bytes, bitIdx, bitIdx + header.nBits);
+        }
+        console.log(encodedContentStr);
+
+
+        // return this.decode(encodedContentStr, header.charsCoding, header.nBits);
     }
 };
 
