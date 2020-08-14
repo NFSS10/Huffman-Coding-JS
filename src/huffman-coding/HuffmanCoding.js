@@ -30,20 +30,15 @@ export const HuffmanCoding = {
     },
     encodeToBuffer(str) {
         const huffmanCodingRes = this.encode(str);
-
-        const isPadded = huffmanCodingRes.encodedStr.length % 2 !== 0;
-
-        const fileHeader = {
-            isPadded: isPadded,
+        const header = {
+            isPadded: (huffmanCodingRes.encodedStr.length % 2) !== 0,
             nBits: huffmanCodingRes.nBits,
             nCodes: Object.keys(huffmanCodingRes.charsCoding).length,
             charsCoding: huffmanCodingRes.charsCoding
         };
 
-        const fileHeaderStr = _encodeFileHeader(fileHeader);
-        const paddedFileHeader = fileHeaderStr + '0'.repeat(8 - (fileHeaderStr.length % 8));
-
-        const fullBinaryStr = paddedFileHeader + huffmanCodingRes.encodedStr;
+        const headerBytes = _headerToBytes(header);
+        const fullBinaryStr = headerBytes + huffmanCodingRes.encodedStr;
 
         const buffersArr = [];
         for (let i = 0; i < fullBinaryStr.length; i += 8) {
@@ -126,18 +121,19 @@ function _encodeTree(node, code, charsCoding, charsCodingMatch) {
     }
 }
 
-function _encodeFileHeader(fileHeader) {
-    let encFileHeaderStr = '';
+function _headerToBytes(header) {
+    let bytesStr = '';
 
-    encFileHeaderStr += fileHeader.isPadded ? '1' : '0';
-    encFileHeaderStr += Utils.toByte(fileHeader.nBits);
-    encFileHeaderStr += Utils.toByte(fileHeader.nCodes);
-    Object.keys(fileHeader.charsCoding).forEach(key => {
+    bytesStr += header.isPadded ? '1' : '0'; // TODO maybe this won't be needed
+    bytesStr += Utils.toByte(header.nBits);
+    bytesStr += Utils.toByte(header.nCodes);
+    Object.keys(header.charsCoding).forEach(key => {
         const keyBinary = Utils.toByte(key.charCodeAt(0));
-        encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
+        bytesStr += `${keyBinary}${header.charsCoding[key]}`;
     });
 
-    return encFileHeaderStr;
+    const paddedBytesStr = bytesStr + '0'.repeat(8 - (bytesStr.length % 8));
+    return paddedBytesStr;
 }
 
 function _parseFileHeader(headerStr) {
