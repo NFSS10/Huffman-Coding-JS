@@ -29,7 +29,7 @@ export const HuffmanCoding = {
     encodeToBuffer(str) {
         const huffmanCodingRes = this.encode(str);
         const header = {
-            isPadded: (huffmanCodingRes.encodedStr.length % 2) !== 0,
+            isPadded: huffmanCodingRes.encodedStr.length % 2 !== 0,
             nBits: huffmanCodingRes.nBits,
             nCodes: Object.keys(huffmanCodingRes.charsCoding).length,
             charsCoding: huffmanCodingRes.charsCoding
@@ -81,7 +81,7 @@ export const HuffmanCoding = {
         for (let bitIdx = contentStartBitIdx; bitIdx < contentEndBitIdx; bitIdx += header.nBits) {
             encodedContentStr += Utils.getBits(bytes, bitIdx, bitIdx + header.nBits);
         }
-        
+
         return this.decode(encodedContentStr, header.charsCoding, header.nBits);
     }
 };
