@@ -1,4 +1,5 @@
 import { Node } from './Node';
+import { Utils } from '../utils';
 
 // TODO fix padding problems e talvez nao usar o valor decimal, mas sim hex
 const testNumbers = [];
@@ -50,39 +51,20 @@ export const HuffmanCoding = {
         const buffersArr = [];
         for (let i = 0; i < fullBinaryStr.length; i += 8) {
             const byte = fullBinaryStr.substring(i, i + 8);
-            buffersArr.push(this._byteStrToBuffer(byte));
+            buffersArr.push(Utils.byteStrToBuffer(byte));
         }
 
         const buffer = Buffer.concat(buffersArr);
         return buffer;
     },
-
-    _byteStrToBuffer(byteStr) {
-        const number = parseInt(byteStr, 2);
-        const hexValue = number.toString(16);
-        const normalizedHex = hexValue.length === 1 ? `0${hexValue}` : hexValue;
-
-        return Buffer.from(normalizedHex, 'hex');
-    },
-
-    bufferToBits(buffer) {
-        let bitsStr = '';
-        for (const hex of buffer) {
-            const hexAsBinary = ('00000000' + hex.toString(2)).substr(-8);
-            bitsStr += hexAsBinary;
-        }
-
-        return bitsStr;
-    },
-
     _encodeFileHeader(fileHeader) {
         let encFileHeaderStr = '';
 
         encFileHeaderStr += fileHeader.isPadded ? '1' : '0';
-        encFileHeaderStr += ('00000000' + this.fileHeader.nBits.toString(2)).substr(-8);
-        encFileHeaderStr += ('00000000' + this.fileHeader.nCodes.toString(2)).substr(-8);
+        encFileHeaderStr += Utils.toByteStr(fileHeader.nBits);
+        encFileHeaderStr += Utils.toByteStr(fileHeader.nCodes);
         Object.keys(fileHeader.charsCoding).forEach(key => {
-            const keyBinary = ('00000000' + key.charCodeAt(0).toString(2)).substr(-8);
+            const keyBinary = Utils.toByteStr(key.charCodeAt(0));
             encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
         });
 
