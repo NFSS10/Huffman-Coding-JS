@@ -24,13 +24,17 @@ describe('Huffman Coding Tests', () => {
         expect(huffmanCodingRes.encodedStr).toEqual('000001101101010011100');
     });
 
-    /*     it('should decode a string', () => {
+    it('should decode a string', () => {
         const huffmanCoding = new HuffmanCoding();
 
-        const encodedStr = huffmanCoding.encode('Huffman');
-        expect(encodedStr).toEqual('000001101101010011100');
+        const huffmanCodingRes = huffmanCoding.encode('Huffman');
+        expect(huffmanCodingRes.encodedStr).toEqual('000001101101010011100');
 
-        const decodedStr = huffmanCoding.decode('000001101101010011100');
+        const decodedStr = huffmanCoding.decode(
+            '000001101101010011100',
+            huffmanCodingRes.charsCodingMatch,
+            huffmanCodingRes.nBits
+        );
         expect(decodedStr).toEqual('Huffman');
-    }); */
+    });
 });

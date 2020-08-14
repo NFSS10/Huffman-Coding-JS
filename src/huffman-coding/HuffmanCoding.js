@@ -7,7 +7,6 @@ const testNumbers = [];
 export class HuffmanCoding {
     constructor() {
         this.charsCoding = {};
-        this.charsCodingMatch = {};
         this.nBits = 0;
         this.fileHeader = {};
     }
@@ -126,13 +125,13 @@ export class HuffmanCoding {
         };
     }
 
-    decode(encodedStr) {
-        if (!this.nBits) return null;
+    decode(encodedStr, charsCodingMatch, nBits) {
+        if (!nBits) return null;
 
         let decodedStr = '';
-        for (let i = 0; i < encodedStr.length; i += this.nBits) {
-            const code = encodedStr.substring(i, i + this.nBits);
-            decodedStr += this.charsCodingMatch[code];
+        for (let i = 0; i < encodedStr.length; i += nBits) {
+            const code = encodedStr.substring(i, i + nBits);
+            decodedStr += charsCodingMatch[code];
         }
 
         return decodedStr;
