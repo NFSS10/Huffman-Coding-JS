@@ -1,21 +1,18 @@
 import { Node } from './Node';
 import { Utils } from '../utils';
 
-// TODO fix padding problems e talvez nao usar o valor decimal, mas sim hex
-const testNumbers = [];
-
 export const HuffmanCoding = {
     encode(str) {
-        const charsFreq = this._calculateCharsFrequency(str);
+        const charsFreq = _calculateCharsFrequency(str);
 
-        let treeNodes = this._buildNodes(charsFreq);
+        let treeNodes = _buildNodes(charsFreq);
         while (treeNodes.length !== 1) {
-            treeNodes = this._joinNodes(treeNodes);
+            treeNodes = _joinNodes(treeNodes);
         }
 
         const charsCoding = {};
         const charsCodingMatch = {};
-        this._encodeTree(treeNodes[0], '', charsCoding, charsCodingMatch);
+        _encodeTree(treeNodes[0], '', charsCoding, charsCodingMatch);
 
         let encodedStr = '';
         for (let i = 0; i < str.length; i++) {
@@ -43,7 +40,7 @@ export const HuffmanCoding = {
             charsCoding: huffmanCodingRes.charsCoding
         };
 
-        const fileHeaderStr = this._encodeFileHeader(fileHeader);
+        const fileHeaderStr = _encodeFileHeader(fileHeader);
         const paddedFileHeader = fileHeaderStr + '0'.repeat(8 - (fileHeaderStr.length % 8));
 
         const fullBinaryStr = paddedFileHeader + huffmanCodingRes.encodedStr;
@@ -57,46 +54,6 @@ export const HuffmanCoding = {
         const buffer = Buffer.concat(buffersArr);
         return buffer;
     },
-    _encodeFileHeader(fileHeader) {
-        let encFileHeaderStr = '';
-
-        encFileHeaderStr += fileHeader.isPadded ? '1' : '0';
-        encFileHeaderStr += Utils.toByte(fileHeader.nBits);
-        encFileHeaderStr += Utils.toByte(fileHeader.nCodes);
-        Object.keys(fileHeader.charsCoding).forEach(key => {
-            const keyBinary = Utils.toByte(key.charCodeAt(0));
-            encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
-        });
-
-        return encFileHeaderStr;
-    },
-    _parseFileHeader(headerStr) {
-        let headerInx = 0;
-        const isPadded = Boolean(parseInt(headerStr[headerInx]));
-        headerInx++;
-        const nBits = parseInt(Utils.getByte(headerStr, headerInx), 2);
-        headerInx += 8;
-        const nCodes = parseInt(Utils.getByte(headerStr, headerInx), 2);
-        headerInx += 8;
-        const charsCoding = {};
-        for (let i = 0; i < nCodes; i++) {
-            const keyBinary = Utils.getByte(headerStr, headerInx);
-            headerInx += 8;
-
-            const keyCharCode = parseInt(keyBinary, 2);
-            const key = String.fromCharCode(keyCharCode);
-
-            charsCoding[key] = Utils.getBits(headerStr, headerInx, headerInx + nBits);
-            headerInx += nBits;
-        }
-
-        return {
-            isPadded: isPadded,
-            nBits: nBits,
-            nCodes: nCodes,
-            charsCoding: charsCoding
-        };
-    },
     decode(encodedStr, charsCodingMatch, nBits) {
         if (!nBits) return null;
 
@@ -108,58 +65,103 @@ export const HuffmanCoding = {
 
         return decodedStr;
     },
-    _calculateCharsFrequency(str) {
-        const charsFreq = {};
-        for (let i = 0; i < str.length; i++) {
-            const char = str[i];
-            charsFreq[char] = charsFreq[char] ? charsFreq[char] + 1 : 1;
-        }
-
-        return charsFreq;
-    },
-    _buildNodes(charsFreq) {
-        const sortedChars = Object.keys(charsFreq).sort((a, b) => charsFreq[a] - charsFreq[b]);
-
-        const nodes = [];
-        for (let i = 0; i < sortedChars.length; i += 2) {
-            const char1 = sortedChars[i] ? sortedChars[i] : null;
-            const char2 = sortedChars[i + 1] ? sortedChars[i + 1] : null;
-
-            const char1Freq = charsFreq[char1] ? charsFreq[char1] : 0;
-            const char2Freq = charsFreq[char2] ? charsFreq[char2] : 0;
-
-            const newNode = new Node(char1Freq + char2Freq, char1, char2);
-            nodes.push(newNode);
-        }
-
-        return nodes;
-    },
-    _joinNodes(nodes) {
-        const joinedNodes = [];
-        for (let i = 0; i < nodes.length; i += 2) {
-            const node1 = nodes[i] ? nodes[i] : null;
-            const node2 = nodes[i + 1] ? nodes[i + 1] : null;
-
-            const n1Value = node1 ? node1.value : 0;
-            const n2Value = node2 ? node2.value : 0;
-
-            const joinedNode = new Node(n1Value + n2Value, node1, node2);
-            joinedNodes.push(joinedNode);
-        }
-
-        return joinedNodes;
-    },
-    _encodeTree(node, code, charsCoding, charsCodingMatch) {
-        if (!node) return;
-
-        if (node.left || node.right) {
-            this._encodeTree(node.left, `${code}0`, charsCoding, charsCodingMatch);
-            this._encodeTree(node.right, `${code}1`, charsCoding, charsCodingMatch);
-        } else {
-            charsCoding[node] = code;
-            charsCodingMatch[code] = node;
-        }
+    decodeFromBuffer(buffer) {
+        // TODO
     }
 };
+
+function _calculateCharsFrequency(str) {
+    const charsFreq = {};
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        charsFreq[char] = charsFreq[char] ? charsFreq[char] + 1 : 1;
+    }
+
+    return charsFreq;
+}
+function _buildNodes(charsFreq) {
+    const sortedChars = Object.keys(charsFreq).sort((a, b) => charsFreq[a] - charsFreq[b]);
+
+    const nodes = [];
+    for (let i = 0; i < sortedChars.length; i += 2) {
+        const char1 = sortedChars[i] ? sortedChars[i] : null;
+        const char2 = sortedChars[i + 1] ? sortedChars[i + 1] : null;
+
+        const char1Freq = charsFreq[char1] ? charsFreq[char1] : 0;
+        const char2Freq = charsFreq[char2] ? charsFreq[char2] : 0;
+
+        const newNode = new Node(char1Freq + char2Freq, char1, char2);
+        nodes.push(newNode);
+    }
+
+    return nodes;
+}
+function _joinNodes(nodes) {
+    const joinedNodes = [];
+    for (let i = 0; i < nodes.length; i += 2) {
+        const node1 = nodes[i] ? nodes[i] : null;
+        const node2 = nodes[i + 1] ? nodes[i + 1] : null;
+
+        const n1Value = node1 ? node1.value : 0;
+        const n2Value = node2 ? node2.value : 0;
+
+        const joinedNode = new Node(n1Value + n2Value, node1, node2);
+        joinedNodes.push(joinedNode);
+    }
+
+    return joinedNodes;
+}
+function _encodeTree(node, code, charsCoding, charsCodingMatch) {
+    if (!node) return;
+
+    if (node.left || node.right) {
+        _encodeTree(node.left, `${code}0`, charsCoding, charsCodingMatch);
+        _encodeTree(node.right, `${code}1`, charsCoding, charsCodingMatch);
+    } else {
+        charsCoding[node] = code;
+        charsCodingMatch[code] = node;
+    }
+}
+
+function _encodeFileHeader(fileHeader) {
+    let encFileHeaderStr = '';
+
+    encFileHeaderStr += fileHeader.isPadded ? '1' : '0';
+    encFileHeaderStr += Utils.toByte(fileHeader.nBits);
+    encFileHeaderStr += Utils.toByte(fileHeader.nCodes);
+    Object.keys(fileHeader.charsCoding).forEach(key => {
+        const keyBinary = Utils.toByte(key.charCodeAt(0));
+        encFileHeaderStr += `${keyBinary}${fileHeader.charsCoding[key]}`;
+    });
+
+    return encFileHeaderStr;
+}
+function _parseFileHeader(headerStr) {
+    let headerInx = 0;
+    const isPadded = Boolean(parseInt(headerStr[headerInx]));
+    headerInx++;
+    const nBits = parseInt(Utils.getByte(headerStr, headerInx), 2);
+    headerInx += 8;
+    const nCodes = parseInt(Utils.getByte(headerStr, headerInx), 2);
+    headerInx += 8;
+    const charsCoding = {};
+    for (let i = 0; i < nCodes; i++) {
+        const keyBinary = Utils.getByte(headerStr, headerInx);
+        headerInx += 8;
+
+        const keyCharCode = parseInt(keyBinary, 2);
+        const key = String.fromCharCode(keyCharCode);
+
+        charsCoding[key] = Utils.getBits(headerStr, headerInx, headerInx + nBits);
+        headerInx += nBits;
+    }
+
+    return {
+        isPadded: isPadded,
+        nBits: nBits,
+        nCodes: nCodes,
+        charsCoding: charsCoding
+    };
+}
 
 export default HuffmanCoding;
