@@ -81,9 +81,8 @@ export const HuffmanCoding = {
         for (let bitIdx = contentStartBitIdx; bitIdx < contentEndBitIdx; bitIdx += header.nBits) {
             encodedContentStr += Utils.getBits(bytes, bitIdx, bitIdx + header.nBits);
         }
-        console.log(encodedContentStr);
-
-        // return this.decode(encodedContentStr, header.charsCoding, header.nBits);
+        
+        return this.decode(encodedContentStr, header.charsCoding, header.nBits);
     }
 };
 
