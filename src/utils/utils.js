@@ -1,4 +1,4 @@
-export const Utils = {
+const Utils = {
     toByte(value) {
         return ('00000000' + value.toString(2)).substr(-8);
     },
@@ -25,4 +25,4 @@ export const Utils = {
     }
 };
 
-export default Utils;
+module.exports = Utils;

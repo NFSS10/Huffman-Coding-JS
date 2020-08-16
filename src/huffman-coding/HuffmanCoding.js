@@ -1,7 +1,7 @@
-import { Node } from './Node';
-import { Utils } from '../utils';
+const Node = require('./Node');
+const Utils = require('../utils');
 
-export const HuffmanCoding = {
+const HuffmanCoding = {
     encode(str, keyLength = 1) {
         const charsFreq = _calculateCharsFrequency(str, keyLength);
 
@@ -184,4 +184,6 @@ function _bytesToHeader(headerBytes) {
     };
 }
 
-export default HuffmanCoding;
+module.exports = {
+    HuffmanCoding: HuffmanCoding
+};

@@ -1,1 +1,3 @@
-export * from './Utils.js';
+const utils = require('./utils');
+
+Object.assign(module.exports, utils);

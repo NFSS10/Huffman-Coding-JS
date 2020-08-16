@@ -1,4 +1,4 @@
-import { HuffmanCoding } from '../..';
+const HuffmanCoding = require('../..');
 
 describe('Huffman Coding Tests', () => {
     it('should encode a string', () => {
