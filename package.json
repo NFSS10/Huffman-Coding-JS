@@ -1,6 +1,6 @@
 {
     "name": "@nfss10/huffman-coding-js",
-    "version": "0.5.2",
+    "version": "0.5.5",
     "description": "Huffman Coding",
     "main": "index.js",
     "scripts": {
